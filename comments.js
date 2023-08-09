@@ -1,28 +1,22 @@
 // create web server
-const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
-// create app
-const app = express()
-// use middleware
-app.use(bodyParser.json())
-app.use(cors())
-// create comment
-const comments = {}
-// create route
-app.get('/posts/:id/comments', (req, res) => {
-  res.send(comments[req.params.id] || [])
-})
-// create route
-app.post('/posts/:id/comments', (req, res) => {
-  const { content } = req.body
-  const commentId = randomBytes(4).toString('hex')
-  const comments = comments[req.params.id] || []
-  comments.push({ id: commentId, content })
-  comments[req.params.id] = comments
-  res.status(201).send(comments)
-})
-// listen to port
-app.listen(4001, () => {
-  console.log('Listening on 4001')
-})
+// execute node comments.js
+// localhost:3000
+
+var http = require('http');
+var url = require('url');
+var fs = require('fs');
+
+var comments = [];
+http.createServer(function(req, res) {
+  var urlObj = url.parse(req.url, true);
+  var pathname = urlObj.pathname;
+  if (pathname === '/') {
+    fs.readFile('./views/index.html', function(err, data) {
+      if (err) {
+        return res.end('404 Not Found');
+      }
+      var htmlStr = template.render(data.toString(), {
+        comments: comments
+      });
+      res.end(htmlStr);
+    });
